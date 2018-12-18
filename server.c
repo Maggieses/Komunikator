@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define PORT 20000
-#define THREADS 1000
+#define PORT_L 20000
+#define THREADS 100
 
 int main (void) {
 	int gniazdo;
@@ -17,9 +17,12 @@ int main (void) {
 	struct sockaddr_in adr,nadawca;
 	socklen_t dl= sizeof (struct sockaddr_in);
 
+	conn=mysql_init(NULL);
+	if(!mysql_real_connect(conn,HOST,USER,PASS,DATABASE,PORT,SOCKET,OPTIONS))return 2;
+
 	gniazdo = socket (PF_INET, SOCK_STREAM, 0);
 	adr.sin_family = AF_INET;
-	adr.sin_port = htons(PORT);
+	adr.sin_port = htons(PORT_L);
 	adr.sin_addr.s_addr = INADDR_ANY;
 	if (bind(gniazdo, (struct sockaddr*) &adr, sizeof(adr)) < 0){
 		return 1;
@@ -28,7 +31,7 @@ int main (void) {
 		return 1;
 	}
 	
-	printf("Listens on %d\n",PORT);
+	printf("Listens on %d\n",PORT_L);
 
 	while(1){
 		tmp_args=malloc(sizeof(*tmp_args));
